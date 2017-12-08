@@ -20,10 +20,31 @@ class BasicTest extends TestCase
         $response->assertStatus(302);
     }
 
+    public function testHomeAuth()
+    {
+        $user = factory(User::class)->create();
+        $response = $this->actingAs($user, 'api')
+                         ->get('/home');
+        $response->assertStatus(200);
+    }
+
+    public function testPostResetPasss()
+    {
+        $user = factory(User::class)->create();
+        $response = $this->post('/password/reset', ['email' => $user->email]);
+        $response->assertStatus(302);
+    }
+
     public function testLogin()
     {
         $response = $this->get('/login');
         $response->assertStatus(200);
+    }
+
+    public function testLogout()
+    {
+        $response = $this->post('/logout');
+        $response->assertStatus(302);
     }
 
     public function testRegister()
@@ -32,7 +53,7 @@ class BasicTest extends TestCase
         $response->assertStatus(200);
     }
 
-    public function testResetPasss()
+    public function testGetResetPasss()
     {
         $response = $this->get('/password/reset');
         $response->assertStatus(200);
@@ -46,8 +67,9 @@ class BasicTest extends TestCase
             'password' => '12345678',
             'password_confirmation' => '12345678',
         ]);
-        $response->assertStatus(500);
+        $response->assertStatus(302);
     }
+
     public function testExample()
     {
         $this->assertTrue(true);
